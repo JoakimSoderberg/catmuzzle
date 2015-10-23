@@ -29,14 +29,24 @@ static unsigned char * read_png_file(char * filename,
                                      unsigned int * bitsperpixel)
 {
     unsigned error;
-	unsigned char* image;
-	unsigned w, h;
-	error = lodepng_decode24_file(&image, &w, &h, filename);
-	if (error) printf("read_png_file: error %u: %s\n", error, lodepng_error_text(error));
+    unsigned char * image;
+    unsigned w, h;
+    unsigned char * png;
+    size_t pngsize;
+    LodePNGState state;
+
+    lodepng_state_init(&state);
+
+    lodepng_load_file(&png, &pngsize, filename);
+    error = lodepng_decode(&image, &w, &h, &state, png, pngsize);
+    if (error) printf("error %u: %s\n", error, lodepng_error_text(error));
 
     *width = w;
     *height = h;
-    *bitsperpixel=24;
+    *bitsperpixel=8;
+
+    free(png);
+    lodepng_state_cleanup(&state);
     return image;
 }
 
