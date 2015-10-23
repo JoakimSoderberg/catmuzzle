@@ -1,3 +1,22 @@
+/*
+   catmuzzle - A cat muzzle detector
+   Copyright (C) 2015 Bob Mottram <bob@robotics.uk.to>
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License along
+   with this program; if not, write to the Free Software Foundation, Inc.,
+   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
 #include "muzzle.h"
 
 const int border_percent = 5;
@@ -76,7 +95,7 @@ static void muzzle_profile_diagonal_right(unsigned char * img,
             data[ctr] = img[(y*image_width + xx)*bytesperpixel];
         }
         if (ctr > 5) {
-            border_pixels = ctr * border_percent / 100;     
+            border_pixels = ctr * border_percent / 100;
             for (y = border_pixels; y < ctr-border_pixels; y++) {
                 diff = 0;
                 for (xx = y - border_pixels; xx < y; xx++) {
@@ -89,11 +108,11 @@ static void muzzle_profile_diagonal_right(unsigned char * img,
                 if (diff > max_diff) {
                     max_diff = diff;
                     profile[s] = (float)y/(float)ctr;
-                }           
+                }
             }
         }
     }
-    
+
     muzzle_normalise(samples, profile);
 }
 
@@ -120,7 +139,7 @@ static void muzzle_profile_diagonal_left(unsigned char * img,
             data[ctr] = img[(y*image_width + xx)*bytesperpixel];
         }
         if (ctr > 5) {
-            border_pixels = ctr * border_percent / 100;     
+            border_pixels = ctr * border_percent / 100;
             for (y = border_pixels; y < ctr-border_pixels; y++) {
                 diff = 0;
                 for (xx = y - border_pixels; xx < y; xx++) {
@@ -133,11 +152,11 @@ static void muzzle_profile_diagonal_left(unsigned char * img,
                 if (diff > max_diff) {
                     max_diff = diff;
                     profile[s] = (float)y/(float)ctr;
-                }           
+                }
             }
         }
     }
-    
+
     muzzle_normalise(samples, profile);
 }
 
@@ -147,7 +166,7 @@ void muzzle_profile(unsigned char * img,
                     int samples, float profile[])
 {
     int samples_per_axis = samples/3;
-    
+
     muzzle_profile_horizontal(img, image_width, image_height, bytesperpixel,
                               samples_per_axis, profile);
 
