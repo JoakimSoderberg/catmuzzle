@@ -14,13 +14,23 @@ int main(int argc, char* argv[])
     unsigned int image_height=0;
     unsigned int image_bitsperpixel=0;
     unsigned char * image_data = NULL;
+	int i, positive = 0;
 
     sprintf((char*)output_filename,"%s","result.png");
 
-    for (i=1;i<argc;i+=2) {
+    for (i=1;i<argc;i++) {
         if ((strcmp(argv[i],"-f")==0) ||
             (strcmp(argv[i],"--filename")==0)) {
             filename = argv[i+1];
+			i++;
+        }
+        if ((strcmp(argv[i],"-p")==0) ||
+            (strcmp(argv[i],"--positive")==0)) {
+            positive = 1;
+        }
+        if ((strcmp(argv[i],"-n")==0) ||
+            (strcmp(argv[i],"--negative")==0)) {
+            positive = 0;
         }
     }
 
@@ -44,16 +54,9 @@ int main(int argc, char* argv[])
         return 0;
     }
 
-    printf("Image: %s\n", filename);
-    printf("Resolution: %dx%d\n", image_width, image_height);
-    printf("Depth: %d\n", image_bitsperpixel);
-
-    /* save the image */
-    write_png_file(output_filename, image_width, image_height, 24, image_data);
+	muzzle_csv(image_data, image_width, image_height, image_bitsperpixel/8, positive);
 
     /* free memory */
     free(image_data);
-
-    printf("Ended Successfully\n");
     return 0;
 }
