@@ -19,7 +19,23 @@
 
 #include "muzzle.h"
 
-const int border_percent = 5;
+const int border_percent = 10;
+
+void muzzle_smooth(int samples, float profile[])
+{
+    int i;
+    float last = 0;
+
+    for (i = 0; i < samples; i++) {
+        if ((profile[i] == 0) || (profile[i] == 1)) {
+            profile[i] = last;
+            continue;
+        }
+        if (profile[i] > 0) {
+            last = profile[i];
+        }
+    }
+}
 
 /* normalise for translational invariance */
 void muzzle_normalise(int samples, float profile[])
@@ -40,10 +56,12 @@ void muzzle_normalise(int samples, float profile[])
     for (i = 0; i < samples; i++) {
         profile[i] = (profile[i] - min)/(max - min);
     }
+    muzzle_smooth(samples, profile);
 }
 
 /* for a number of horizontal samples find the maximum edge response */
-void muzzle_profile_horizontal(unsigned char * img, int image_width, int image_height, int bytesperpixel,
+void muzzle_profile_horizontal(unsigned char * img,
+                               int image_width, int image_height, int bytesperpixel,
                                int samples, float profile[])
 {
     int s, x, xx, y;
@@ -57,10 +75,10 @@ void muzzle_profile_horizontal(unsigned char * img, int image_width, int image_h
         for (x = border_pixels; x < image_width-border_pixels; x++) {
             diff = 0;
             for (xx = x - border_pixels; xx < x; xx++) {
-                diff += img[(y*image_width + xx)*bytesperpixel];
+                diff += img[(y*image_width + xx)*bytesperpixel] * img[(y*image_width + xx)*bytesperpixel];
             }
             for (xx = x; xx < x + border_pixels; xx++) {
-                diff -= img[(y*image_width + xx)*bytesperpixel];
+                diff -= img[(y*image_width + xx)*bytesperpixel] * img[(y*image_width + xx)*bytesperpixel];
             }
             if (diff < 0) diff = -diff;
             if (diff > max_diff) {
@@ -182,12 +200,12 @@ void muzzle_csv(unsigned char * img,
                 int image_width, int image_height, int bytesperpixel,
                 int positive)
 {
-    int i, samples = 128*3;
-    float profile[128*3];
+    int i, samples = 256*3;
+    float profile[256*3];
 
     muzzle_profile(img, image_width, image_height, bytesperpixel, samples, profile);
     for (i = 0; i < samples; i++) {
-        printf("%.4f, ", profile[i]);
+        printf("%.4f,", profile[i]);
     }
     printf("%d\n", positive);
 }
