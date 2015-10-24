@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
     unsigned int image_height=0;
     unsigned int image_bitsperpixel=0;
     unsigned char * image_data = NULL;
-	int i, positive = 0;
+	int i, positive = -1;
 
     sprintf((char*)output_filename,"%s","result.png");
 

@@ -205,7 +205,9 @@ void muzzle_csv(unsigned char * img,
 
     muzzle_profile(img, image_width, image_height, bytesperpixel, samples, profile);
     for (i = 0; i < samples; i++) {
-        printf("%.4f,", profile[i]);
+        printf("%.4f", profile[i]);
+        if (i < samples-1) printf(",");
     }
-    printf("%d\n", positive);
+	if (positive > -1)
+		printf(",%d\n", positive);
 }
