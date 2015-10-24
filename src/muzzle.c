@@ -200,8 +200,8 @@ void muzzle_csv(unsigned char * img,
                 int image_width, int image_height, int bytesperpixel,
                 int positive)
 {
-    int i, samples = 256*3;
-    float profile[256*3];
+    int i, samples = 128*3;
+    float profile[128*3];
 
     muzzle_profile(img, image_width, image_height, bytesperpixel, samples, profile);
     for (i = 0; i < samples; i++) {
